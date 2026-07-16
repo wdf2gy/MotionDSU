@@ -202,10 +202,10 @@ function renderControls() {
 
 function getDefaultText(id) {
     const m = {
-        btnA:'A', btnB:'B', btnX:'X', btnY:'Y',
-        shoulderL:'LB', shoulderR:'RB', triggerL:'LT', triggerR:'RT',
-        btnSelect:'SEL', btnStart:'START', btnHome:'HOME',
-        dpadUp:'↑', dpadDown:'↓', dpadLeft:'←', dpadRight:'→'
+        btnA: 'A', btnB: 'B', btnX: 'X', btnY: 'Y',
+        shoulderL: 'LB', shoulderR: 'RB', triggerL: 'LT', triggerR: 'RT',
+        btnSelect: 'SEL', btnStart: 'START', btnHome: 'HOME',
+        dpadUp: '↑', dpadDown: '↓', dpadLeft: '←', dpadRight: '→'
     };
     return m[id] || '';
 }
@@ -279,7 +279,7 @@ async function exportLayout() {
         });
     });
     const text = JSON.stringify(data, null, 2);
-    const filename = `MotionDSU_布局_${new Date().toISOString().slice(0,10)}.json`;
+    const filename = `MotionDSU_布局_${new Date().toISOString().slice(0, 10)}.json`;
 
     // 1) 尝试 Web Share API (移动端原生分享菜单)
     const file = new File([text], filename, { type: 'application/json' });
@@ -311,7 +311,7 @@ function importLayout(file) {
             });
             alert(`✅ 已导入 ${count} 个布局配置`);
             renderControls();
-        } catch(err) {
+        } catch (err) {
             alert('❌ 导入失败: ' + err.message);
         }
     };
@@ -335,7 +335,7 @@ const editModeBtn = document.getElementById('editModeBtn');
 
 let selectedControls = new Set();
 let alignGuides = [];
-let tapStart = {x:0,y:0};
+let tapStart = { x: 0, y: 0 };
 let tapMoved = false;
 
 editModeBtn.addEventListener('click', () => {
@@ -374,83 +374,83 @@ function clearSelection() {
 
 // ----- 对齐辅助线 -----
 const ALIGN_THRESH = 6;
-function clearGuides() { alignGuides.forEach(g=>g.remove()); alignGuides=[]; }
+function clearGuides() { alignGuides.forEach(g => g.remove()); alignGuides = []; }
 
 function showGuideLine(axis, pos, pr) {
-    const g = document.createElement('div'); g.className='align-guide';
-    if (axis==='h') g.style.cssText=`position:absolute;left:0;right:0;top:${pos-pr.top}px;height:1px;border-top:1px dashed #00d4ff;pointer-events:none;z-index:999;`;
-    else g.style.cssText=`position:absolute;top:0;bottom:0;left:${pos-pr.left}px;width:1px;border-left:1px dashed #00d4ff;pointer-events:none;z-index:999;`;
+    const g = document.createElement('div'); g.className = 'align-guide';
+    if (axis === 'h') g.style.cssText = `position:absolute;left:0;right:0;top:${pos - pr.top}px;height:1px;border-top:1px dashed #00d4ff;pointer-events:none;z-index:999;`;
+    else g.style.cssText = `position:absolute;top:0;bottom:0;left:${pos - pr.left}px;width:1px;border-left:1px dashed #00d4ff;pointer-events:none;z-index:999;`;
     virtualPad.appendChild(g); alignGuides.push(g);
 }
 
 function findSnap(dr, others) {
-    const d = {l:dr.left,r:dr.right,cx:dr.left+dr.width/2,t:dr.top,b:dr.bottom,cy:dr.top+dr.height/2};
-    let sx=null,sy=null,gx=null,gy=null;
-    const ve=['l','cx','r'],he=['t','cy','b'];
+    const d = { l: dr.left, r: dr.right, cx: dr.left + dr.width / 2, t: dr.top, b: dr.bottom, cy: dr.top + dr.height / 2 };
+    let sx = null, sy = null, gx = null, gy = null;
+    const ve = ['l', 'cx', 'r'], he = ['t', 'cy', 'b'];
     for (const o of others) {
-        const oo={l:o.left,r:o.right,cx:o.left+o.width/2,t:o.top,b:o.bottom,cy:o.top+o.height/2};
-        for (const de of ve) for (const oe of ve) { const df=d[de]-oo[oe]; if (Math.abs(df)<ALIGN_THRESH) { sx=oo[oe]-d[de]; gx=oo[oe]; } }
-        for (const de of he) for (const oe of he) { const df=d[de]-oo[oe]; if (Math.abs(df)<ALIGN_THRESH) { sy=oo[oe]-d[de]; gy=oo[oe]; } }
+        const oo = { l: o.left, r: o.right, cx: o.left + o.width / 2, t: o.top, b: o.bottom, cy: o.top + o.height / 2 };
+        for (const de of ve) for (const oe of ve) { const df = d[de] - oo[oe]; if (Math.abs(df) < ALIGN_THRESH) { sx = oo[oe] - d[de]; gx = oo[oe]; } }
+        for (const de of he) for (const oe of he) { const df = d[de] - oo[oe]; if (Math.abs(df) < ALIGN_THRESH) { sy = oo[oe] - d[de]; gy = oo[oe]; } }
     }
-    return {dx:sx,dy:sy,guideX:gx,guideY:gy};
+    return { dx: sx, dy: sy, guideX: gx, guideY: gy };
 }
 
 // ----- 排列工具栏 (可拖动) -----
 let tbDragOff = null;
 function updateAlignToolbar() {
     let bar = document.getElementById('alignToolbar');
-    if (selectedControls.size<2) { if (bar) bar.remove(); tbDragOff=null; return; }
+    if (selectedControls.size < 2) { if (bar) bar.remove(); tbDragOff = null; return; }
     if (!bar) {
-        bar=document.createElement('div'); bar.id='alignToolbar'; bar.className='align-toolbar';
-        const n=selectedControls.size;
-        bar.innerHTML=`<div class="tb-handle"><span class="tb-dots">⠿</span></div>
+        bar = document.createElement('div'); bar.id = 'alignToolbar'; bar.className = 'align-toolbar';
+        const n = selectedControls.size;
+        bar.innerHTML = `<div class="tb-handle"><span class="tb-dots">⠿</span></div>
 <div class="tb-row tb-hdr"><span class="tb-count">已选 ${n}</span><button class="tb-desel">取消选择</button></div>
 <div class="tb-row"><span>水平</span><button data-a="L">L</button><button data-a="CX">CX</button><button data-a="R">R</button><button data-a="DH">↔</button></div>
 <div class="tb-row"><span>垂直</span><button data-a="T">T</button><button data-a="CY">CY</button><button data-a="B">B</button><button data-a="DV">↕</button></div>`;
         virtualPad.appendChild(bar);
-        bar.querySelectorAll('button:not(.tb-desel)').forEach(b=>b.addEventListener('touchstart',e=>{ e.stopPropagation(); alignSelected(b.dataset.a); }));
-        bar.querySelector('.tb-desel')?.addEventListener('touchstart',e=>{ e.stopPropagation(); clearSelection(); });
+        bar.querySelectorAll('button:not(.tb-desel)').forEach(b => b.addEventListener('touchstart', e => { e.stopPropagation(); alignSelected(b.dataset.a); }));
+        bar.querySelector('.tb-desel')?.addEventListener('touchstart', e => { e.stopPropagation(); clearSelection(); });
         // 拖拽手柄
-        bar.querySelector('.tb-handle').addEventListener('touchstart',e=>{ const r=bar.getBoundingClientRect(); tbDragOff={x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}; e.stopPropagation(); },{passive:false});
+        bar.querySelector('.tb-handle').addEventListener('touchstart', e => { const r = bar.getBoundingClientRect(); tbDragOff = { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }; e.stopPropagation(); }, { passive: false });
         // 恢复上次拖拽位置
         try {
             const tp = JSON.parse(localStorage.getItem(`tbPos_${currentPreset}_${currentOrientation}`));
-            if (tp) { bar.style.left=tp.x+'%'; bar.style.top=tp.y+'%'; bar.style.bottom='auto'; bar.style.transform='translate(-50%,-50%)'; }
-        } catch {}
+            if (tp) { bar.style.left = tp.x + '%'; bar.style.top = tp.y + '%'; bar.style.bottom = 'auto'; bar.style.transform = 'translate(-50%,-50%)'; }
+        } catch { }
     }
 }
 
 
 function moveElBy(el, dx, dy, pr) {
-    const cl=parseFloat(el.style.left)||50, ct=parseFloat(el.style.top)||50;
-    if (dx) el.style.left=`${Math.max(5,Math.min(95,cl+(dx/pr.width)*100))}%`;
-    if (dy) el.style.top=`${Math.max(5,Math.min(95,ct+(dy/pr.height)*100))}%`;
+    const cl = parseFloat(el.style.left) || 50, ct = parseFloat(el.style.top) || 50;
+    if (dx) el.style.left = `${Math.max(5, Math.min(95, cl + (dx / pr.width) * 100))}%`;
+    if (dy) el.style.top = `${Math.max(5, Math.min(95, ct + (dy / pr.height) * 100))}%`;
 }
 
 function alignSelected(mode) {
-    const els=[...virtualPad.querySelectorAll('[data-control-id]')].filter(el=>selectedControls.has(el.dataset.controlId));
-    if (els.length<2) return;
-    const pr=virtualPad.getBoundingClientRect();
-    const info=els.map(el=>({el,rect:el.getBoundingClientRect()}));
-    switch(mode) {
-        case 'L': { const m=Math.min(...info.map(i=>i.rect.left)); info.forEach(i=>moveElBy(i.el,m-i.rect.left,0,pr)); break; }
-        case 'CX': { const m=info.reduce((s,i)=>s+i.rect.left+i.rect.width/2,0)/info.length; info.forEach(i=>moveElBy(i.el,m-(i.rect.left+i.rect.width/2),0,pr)); break; }
-        case 'R': { const m=Math.max(...info.map(i=>i.rect.right)); info.forEach(i=>moveElBy(i.el,m-i.rect.right,0,pr)); break; }
-        case 'T': { const m=Math.min(...info.map(i=>i.rect.top)); info.forEach(i=>moveElBy(i.el,0,m-i.rect.top,pr)); break; }
-        case 'CY': { const m=info.reduce((s,i)=>s+i.rect.top+i.rect.height/2,0)/info.length; info.forEach(i=>moveElBy(i.el,0,m-(i.rect.top+i.rect.height/2),pr)); break; }
-        case 'B': { const m=Math.max(...info.map(i=>i.rect.bottom)); info.forEach(i=>moveElBy(i.el,0,m-i.rect.bottom,pr)); break; }
+    const els = [...virtualPad.querySelectorAll('[data-control-id]')].filter(el => selectedControls.has(el.dataset.controlId));
+    if (els.length < 2) return;
+    const pr = virtualPad.getBoundingClientRect();
+    const info = els.map(el => ({ el, rect: el.getBoundingClientRect() }));
+    switch (mode) {
+        case 'L': { const m = Math.min(...info.map(i => i.rect.left)); info.forEach(i => moveElBy(i.el, m - i.rect.left, 0, pr)); break; }
+        case 'CX': { const m = info.reduce((s, i) => s + i.rect.left + i.rect.width / 2, 0) / info.length; info.forEach(i => moveElBy(i.el, m - (i.rect.left + i.rect.width / 2), 0, pr)); break; }
+        case 'R': { const m = Math.max(...info.map(i => i.rect.right)); info.forEach(i => moveElBy(i.el, m - i.rect.right, 0, pr)); break; }
+        case 'T': { const m = Math.min(...info.map(i => i.rect.top)); info.forEach(i => moveElBy(i.el, 0, m - i.rect.top, pr)); break; }
+        case 'CY': { const m = info.reduce((s, i) => s + i.rect.top + i.rect.height / 2, 0) / info.length; info.forEach(i => moveElBy(i.el, 0, m - (i.rect.top + i.rect.height / 2), pr)); break; }
+        case 'B': { const m = Math.max(...info.map(i => i.rect.bottom)); info.forEach(i => moveElBy(i.el, 0, m - i.rect.bottom, pr)); break; }
         case 'DH': {
-            info.sort((a,b)=>a.rect.left-b.rect.left);
-            const start=info[0].rect.left, end=info[info.length-1].rect.right;
-            const gap=((end-start)-info.reduce((s,i)=>s+i.rect.width,0))/(info.length-1);
-            let cur=start; for(const i of info) { moveElBy(i.el,cur-i.rect.left,0,pr); cur+=i.rect.width+gap; }
+            info.sort((a, b) => a.rect.left - b.rect.left);
+            const start = info[0].rect.left, end = info[info.length - 1].rect.right;
+            const gap = ((end - start) - info.reduce((s, i) => s + i.rect.width, 0)) / (info.length - 1);
+            let cur = start; for (const i of info) { moveElBy(i.el, cur - i.rect.left, 0, pr); cur += i.rect.width + gap; }
             break;
         }
         case 'DV': {
-            info.sort((a,b)=>a.rect.top-b.rect.top);
-            const start=info[0].rect.top, end=info[info.length-1].rect.bottom;
-            const gap=((end-start)-info.reduce((s,i)=>s+i.rect.height,0))/(info.length-1);
-            let cur=start; for(const i of info) { moveElBy(i.el,0,cur-i.rect.top,pr); cur+=i.rect.height+gap; }
+            info.sort((a, b) => a.rect.top - b.rect.top);
+            const start = info[0].rect.top, end = info[info.length - 1].rect.bottom;
+            const gap = ((end - start) - info.reduce((s, i) => s + i.rect.height, 0)) / (info.length - 1);
+            let cur = start; for (const i of info) { moveElBy(i.el, 0, cur - i.rect.top, pr); cur += i.rect.height + gap; }
             break;
         }
     }
@@ -461,66 +461,66 @@ let dragGroup = null;
 // ----- 编辑模式触控 -----
 virtualPad.addEventListener('touchstart', (e) => {
     if (!isEditMode) return; e.preventDefault();
-    const t=e.touches[0];
-    if (e.target?.closest?.('.align-toolbar')||e.target?.classList?.contains('vis-toggle')) return;
-    const ctrl=document.elementFromPoint(t.clientX,t.clientY)?.closest('[data-control-id]');
+    const t = e.touches[0];
+    if (e.target?.closest?.('.align-toolbar') || e.target?.classList?.contains('vis-toggle')) return;
+    const ctrl = document.elementFromPoint(t.clientX, t.clientY)?.closest('[data-control-id]');
     if (!ctrl) return;
-    tapStart={x:t.clientX,y:t.clientY}; tapMoved=false; clearGuides();
-    dragTarget=ctrl; const r=ctrl.getBoundingClientRect();
-    dragOffsetX=t.clientX-r.left; dragOffsetY=t.clientY-r.top;
+    tapStart = { x: t.clientX, y: t.clientY }; tapMoved = false; clearGuides();
+    dragTarget = ctrl; const r = ctrl.getBoundingClientRect();
+    dragOffsetX = t.clientX - r.left; dragOffsetY = t.clientY - r.top;
     // 群体拖拽：触摸已选元素 + 有其他已选元素时，整组移动
     dragGroup = (selectedControls.has(ctrl.dataset.controlId) && selectedControls.size > 1)
         ? [...virtualPad.querySelectorAll('[data-control-id]')]
-            .filter(el=>selectedControls.has(el.dataset.controlId))
-            .map(el=>({el, sl:parseFloat(el.style.left)||50, st:parseFloat(el.style.top)||50}))
+            .filter(el => selectedControls.has(el.dataset.controlId))
+            .map(el => ({ el, sl: parseFloat(el.style.left) || 50, st: parseFloat(el.style.top) || 50 }))
         : null;
-}, {passive:false});
+}, { passive: false });
 
 document.addEventListener('touchmove', (e) => {
-    const bar=document.getElementById('alignToolbar');
-    if (bar&&tbDragOff) {
-        const t=e.touches[0], pr=virtualPad.getBoundingClientRect(), br=bar.getBoundingClientRect();
-        let nx=((t.clientX-tbDragOff.x-pr.left+br.width/2)/pr.width)*100;
-        let ny=((t.clientY-tbDragOff.y-pr.top+br.height/2)/pr.height)*100;
-        nx=Math.max(5,Math.min(95,nx)); ny=Math.max(5,Math.min(95,ny));
-        bar.style.left=`${nx}%`; bar.style.top=`${ny}%`; bar.style.bottom='auto'; bar.style.transform='translate(-50%,-50%)';
-        localStorage.setItem(`tbPos_${currentPreset}_${currentOrientation}`, JSON.stringify({x:nx,y:ny}));
+    const bar = document.getElementById('alignToolbar');
+    if (bar && tbDragOff) {
+        const t = e.touches[0], pr = virtualPad.getBoundingClientRect(), br = bar.getBoundingClientRect();
+        let nx = ((t.clientX - tbDragOff.x - pr.left + br.width / 2) / pr.width) * 100;
+        let ny = ((t.clientY - tbDragOff.y - pr.top + br.height / 2) / pr.height) * 100;
+        nx = Math.max(5, Math.min(95, nx)); ny = Math.max(5, Math.min(95, ny));
+        bar.style.left = `${nx}%`; bar.style.top = `${ny}%`; bar.style.bottom = 'auto'; bar.style.transform = 'translate(-50%,-50%)';
+        localStorage.setItem(`tbPos_${currentPreset}_${currentOrientation}`, JSON.stringify({ x: nx, y: ny }));
         return;
     }
-    if (!isEditMode||!dragTarget) return; e.preventDefault();
-    const t=e.touches[0];
-    if (Math.abs(t.clientX-tapStart.x)>4||Math.abs(t.clientY-tapStart.y)>4) tapMoved=true;
+    if (!isEditMode || !dragTarget) return; e.preventDefault();
+    const t = e.touches[0];
+    if (Math.abs(t.clientX - tapStart.x) > 4 || Math.abs(t.clientY - tapStart.y) > 4) tapMoved = true;
     if (!tapMoved) return;
-    const pr=virtualPad.getBoundingClientRect(), er=dragTarget.getBoundingClientRect();
-    let nx=((t.clientX-dragOffsetX-pr.left+er.width/2)/pr.width)*100;
-    let ny=((t.clientY-dragOffsetY-pr.top+er.height/2)/pr.height)*100;
+    const pr = virtualPad.getBoundingClientRect(), er = dragTarget.getBoundingClientRect();
+    let nx = ((t.clientX - dragOffsetX - pr.left + er.width / 2) / pr.width) * 100;
+    let ny = ((t.clientY - dragOffsetY - pr.top + er.height / 2) / pr.height) * 100;
     clearGuides();
-    const others=[...virtualPad.querySelectorAll('[data-control-id]')].filter(el=>el!==dragTarget).map(el=>el.getBoundingClientRect());
-    const snap=findSnap(er,others);
-    if (snap.dx!==null) showGuideLine('v',snap.guideX,pr);
-    if (snap.dy!==null) showGuideLine('h',snap.guideY,pr);
-    nx=Math.max(5,Math.min(95,nx)); ny=Math.max(5,Math.min(95,ny));
-    dragTarget.style.left=`${nx}%`; dragTarget.style.top=`${ny}%`; dragTarget.style.transform='translate(-50%,-50%)';
+    const others = [...virtualPad.querySelectorAll('[data-control-id]')].filter(el => el !== dragTarget).map(el => el.getBoundingClientRect());
+    const snap = findSnap(er, others);
+    if (snap.dx !== null) showGuideLine('v', snap.guideX, pr);
+    if (snap.dy !== null) showGuideLine('h', snap.guideY, pr);
+    nx = Math.max(5, Math.min(95, nx)); ny = Math.max(5, Math.min(95, ny));
+    dragTarget.style.left = `${nx}%`; dragTarget.style.top = `${ny}%`; dragTarget.style.transform = 'translate(-50%,-50%)';
     // 群体移动
     if (dragGroup) {
-        const me=dragGroup.find(g=>g.el===dragTarget);
+        const me = dragGroup.find(g => g.el === dragTarget);
         if (me) {
-            const dx=nx-me.sl, dy=ny-me.st;
-            dragGroup.forEach(item=>{
-                if (item.el===dragTarget) return;
-                item.el.style.left=`${Math.max(5,Math.min(95,item.sl+dx))}%`;
-                item.el.style.top=`${Math.max(5,Math.min(95,item.st+dy))}%`;
-                item.el.style.transform='translate(-50%,-50%)';
+            const dx = nx - me.sl, dy = ny - me.st;
+            dragGroup.forEach(item => {
+                if (item.el === dragTarget) return;
+                item.el.style.left = `${Math.max(5, Math.min(95, item.sl + dx))}%`;
+                item.el.style.top = `${Math.max(5, Math.min(95, item.st + dy))}%`;
+                item.el.style.transform = 'translate(-50%,-50%)';
             });
         }
     }
-}, {passive:false});
+}, { passive: false });
 
 document.addEventListener('touchend', () => {
-    tbDragOff=null; dragGroup=null;
+    tbDragOff = null; dragGroup = null;
     if (!isEditMode) return;
-    if (dragTarget&&!tapMoved) toggleSelection(dragTarget);
-    clearGuides(); dragTarget=null; tapMoved=false;
+    if (dragTarget && !tapMoved) toggleSelection(dragTarget);
+    clearGuides(); dragTarget = null; tapMoved = false;
 });
 
 // ==========================================
@@ -531,19 +531,19 @@ function initPresetSelect() {
     const cur = sel.value || currentPreset;
     sel.innerHTML = '';
     const opts = [
-        {v:'__add__', t:'+ 新建预设'},
-        {v:'__del__', t:'- 删除预设'},
-        {v:'', t:'── 内置 ──', d:true}
+        { v: '__add__', t: '+ 新建预设' },
+        { v: '__del__', t: '- 删除预设' },
+        { v: '', t: '── 内置 ──', d: true }
     ];
     const builtins = ['xbox', 'ps', 'switch', 'gba', 'motion'];
-    const labels = {xbox:'Xbox', ps:'PlayStation', switch:'Switch', gba:'GBA', motion:'体感专用'};
-    builtins.forEach(p => opts.push({v:p, t:labels[p]}));
+    const labels = { xbox: 'Xbox', ps: 'PlayStation', switch: 'Switch', gba: 'GBA', motion: '体感专用' };
+    builtins.forEach(p => opts.push({ v: p, t: labels[p] }));
     const c = getCustomPresets();
     if (c.length) {
-        opts.push({v:'', t:'── 自定 ──', d:true});
-        c.forEach(p => opts.push({v:p, t:p.replace(/^custom_/,'')}));
+        opts.push({ v: '', t: '── 自定 ──', d: true });
+        c.forEach(p => opts.push({ v: p, t: p.replace(/^custom_/, '') }));
     }
-    opts.forEach(({v,t,d}) => {
+    opts.forEach(({ v, t, d }) => {
         const o = document.createElement('option');
         if (d) o.disabled = true;
         o.value = v; o.textContent = t;
@@ -569,10 +569,10 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
         initPresetSelect(); return;
     }
     if (v === '__del__') {
-        if (currentPreset.startsWith('custom_') && confirm(`删除预设「${currentPreset.replace(/^custom_/,'')}」？`)) {
+        if (currentPreset.startsWith('custom_') && confirm(`删除预设「${currentPreset.replace(/^custom_/, '')}」？`)) {
             const list = getCustomPresets().filter(p => p !== currentPreset);
             localStorage.setItem('custom_presets', JSON.stringify(list));
-            ['landscape','portrait'].forEach(o => localStorage.removeItem(`layout_${currentPreset}_${o}`));
+            ['landscape', 'portrait'].forEach(o => localStorage.removeItem(`layout_${currentPreset}_${o}`));
             currentPreset = 'xbox'; initPresetSelect(); document.getElementById('presetSelect').value = 'xbox';
             document.body.className = 'preset-xbox'; renderControls();
         } else { initPresetSelect(); }
@@ -587,7 +587,7 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
 // 7. 触控输入 (含 L3/R3)
 // ==========================================
 const activeTouches = new Map();
-let gamepadState = { buttons: 0, axes: [0,0,0,0], triggers: [0,0] };
+let gamepadState = { buttons: 0, axes: [0, 0, 0, 0], triggers: [0, 0] };
 
 virtualPad.addEventListener('touchstart', (e) => {
     if (isEditMode) return;
@@ -621,14 +621,14 @@ virtualPad.addEventListener('touchmove', (e) => {
         if (d.element.classList.contains('v-stick')) {
             const dx = t.clientX - d.startX, dy = t.clientY - d.startY;
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) d.moved = true;
-            const max = 45, dist = Math.sqrt(dx*dx+dy*dy);
+            const max = 45, dist = Math.sqrt(dx * dx + dy * dy);
             const cd = Math.min(dist, max), ang = Math.atan2(dy, dx);
-            const cdx = Math.cos(ang)*cd, cdy = Math.sin(ang)*cd;
-            d.element.querySelector('.v-stick-knob').style.transform = 
+            const cdx = Math.cos(ang) * cd, cdy = Math.sin(ang) * cd;
+            d.element.querySelector('.v-stick-knob').style.transform =
                 `translate(calc(-50% + ${cdx}px), calc(-50% + ${cdy}px))`;
-            const nx = cdx/max, ny = -cdy/max;
-            if (d.element.id === 'stickL') { gamepadState.axes[0]=nx; gamepadState.axes[1]=ny; }
-            else { gamepadState.axes[2]=nx; gamepadState.axes[3]=ny; }
+            const nx = cdx / max, ny = -cdy / max;
+            if (d.element.id === 'stickL') { gamepadState.axes[0] = nx; gamepadState.axes[1] = ny; }
+            else { gamepadState.axes[2] = nx; gamepadState.axes[3] = ny; }
         } else if (d.element.dataset.controlId === 'triggerL' || d.element.dataset.controlId === 'triggerR') {
             const rect = d.element.getBoundingClientRect();
             const relY = (t.clientY - rect.top) / rect.height;
@@ -659,8 +659,8 @@ virtualPad.addEventListener('touchend', (e) => {
                 setTimeout(() => { gamepadState.buttons &= ~(1 << btn); }, 60);
             }
             d.element.querySelector('.v-stick-knob').style.transform = 'translate(-50%,-50%)';
-            if (d.element.id === 'stickL') { gamepadState.axes[0]=0; gamepadState.axes[1]=0; }
-            else { gamepadState.axes[2]=0; gamepadState.axes[3]=0; }
+            if (d.element.id === 'stickL') { gamepadState.axes[0] = 0; gamepadState.axes[1] = 0; }
+            else { gamepadState.axes[2] = 0; gamepadState.axes[3] = 0; }
         }
         activeTouches.delete(t.identifier);
     }
@@ -669,9 +669,9 @@ virtualPad.addEventListener('touchend', (e) => {
 // ==========================================
 // 8. 体感 & WebSocket
 // ==========================================
-let gyroData={x:0,y:0,z:0}, accelData={x:0,y:0,z:0};
+let gyroData = { x: 0, y: 0, z: 0 }, accelData = { x: 0, y: 0, z: 0 };
 // 陀螺仪积分累加器，用于客户端立方体
-let cubeRot = {pitch:0, yaw:0, roll:0};
+let cubeRot = { pitch: 0, yaw: 0, roll: 0 };
 let lastMotionTs = 0;
 const motionToggle = document.getElementById('motionToggle');
 const motionVisual = document.getElementById('motionVisual');
@@ -684,7 +684,7 @@ let wakeLock = null;
 
 async function requestWakeLock() {
     try { wakeLock = await navigator.wakeLock?.request('screen'); }
-    catch(e) { /* wake lock not supported */ }
+    catch (e) { /* wake lock not supported */ }
 }
 
 function updateVisualization() {
@@ -692,19 +692,23 @@ function updateVisualization() {
     const g = gyroData;
     // 陀螺仪积分累计角（同 DSU 映射: beta→pitch, alpha→yaw, gamma→roll）
     if (cube) cube.style.transform = `rotateX(${cubeRot.pitch}deg) rotateY(${cubeRot.roll}deg) rotateZ(${cubeRot.yaw}deg)`;
-    if (gyroDisplay) gyroDisplay.textContent = `陀螺仪: X=${(g.x||0).toFixed(1)} Y=${(g.y||0).toFixed(1)} Z=${(g.z||0).toFixed(1)}`;
-    if (accelDisplay) accelDisplay.textContent = `加速度: X=${(a.x||0).toFixed(1)} Y=${(a.y||0).toFixed(1)} Z=${(a.z||0).toFixed(1)}`;
+    if (gyroDisplay) gyroDisplay.textContent = `陀螺仪: X=${(g.x || 0).toFixed(1)} Y=${(g.y || 0).toFixed(1)} Z=${(g.z || 0).toFixed(1)}`;
+    if (accelDisplay) accelDisplay.textContent = `加速度: X=${(a.x || 0).toFixed(1)} Y=${(a.y || 0).toFixed(1)} Z=${(a.z || 0).toFixed(1)}`;
 }
 
 function startSensor() {
     if (motionHandler) return;
     motionHandler = (e) => {
-        const r=e.rotationRate||{}, a=e.accelerationIncludingGravity||{};
-        const gx = r.alpha != null ? r.alpha : (r.x || 0);
-        const gy = r.beta != null ? r.beta : (r.y || 0);
-        const gz = r.gamma != null ? r.gamma : (r.z || 0);
-        gyroData={x:gx, y:gy, z:gz};
-        accelData={x:a.x||0,y:a.y||0,z:a.z||0};
+        const r = e.rotationRate || {}, a = e.accelerationIncludingGravity || {};
+        let gx = r.alpha != null ? r.alpha : (r.x || 0);
+        let gy = r.beta != null ? r.beta : (r.y || 0);
+        let gz = r.gamma != null ? r.gamma : (r.z || 0);
+        // DSU 映射: alpha→yaw, beta→pitch, gamma→roll
+        // gx *= -1;
+        gy *= -1;
+        gz *= -1;
+        gyroData = { x: gx, y: gy, z: gz };
+        accelData = { x: a.x || 0, y: a.y || 0, z: a.z || 0 };
         // 陀螺仪积分: 累积角 += 角速度(°/s) × Δt(s) (仅体感开启时)
         if (motionToggle.checked) {
             const ts = e.timeStamp;
@@ -720,10 +724,10 @@ function startSensor() {
                     //   竖屏: 水平轴 = X(beta=前后), 垂直轴 = Y(gamma=左右)
                     //   横屏: 水平轴 = Y(gamma=前后), 垂直轴 = X(beta=左右)
                     const pitchRate = isLandscape ? gy : gx;  // 前后倾斜速率
-                    const rollRate  = isLandscape ? gx : gy;  // 左右翻转速率
-                    cubeRot.pitch += pitchRate * dt;
-                    cubeRot.roll  += rollRate * dt;
-                    cubeRot.yaw   += gz * dt * -1;  // 自旋 (alpha, 始终不变)
+                    const rollRate = isLandscape ? gx : gy;  // 左右翻转速率
+                    cubeRot.pitch += pitchRate * dt * -1;  // pitch 方向相反
+                    cubeRot.roll += rollRate * dt * -1;  // roll 方向相反
+                    cubeRot.yaw += gz * dt;  // 自旋 (alpha, 始终不变)
                     // orientationStatus.textContent = isLandscape ? "横屏" : "竖屏";
                 }
             }
@@ -746,9 +750,9 @@ function stopSensor() {
     if (!motionHandler) return;
     window.removeEventListener('devicemotion', motionHandler);
     motionHandler = null;
-    gyroData = {x:0, y:0, z:0};
-    accelData = {x:0, y:0, z:0};
-    cubeRot = {pitch:0, yaw:0, roll:0};
+    gyroData = { x: 0, y: 0, z: 0 };
+    accelData = { x: 0, y: 0, z: 0 };
+    cubeRot = { pitch: 0, yaw: 0, roll: 0 };
     lastMotionTs = 0;
     updateVisualization();
 }
@@ -760,7 +764,7 @@ motionToggle.addEventListener('change', async () => {
         requestWakeLock();
     } else {
         if (wakeLock) { wakeLock.release(); wakeLock = null; }
-        cubeRot = {pitch:0, yaw:0, roll:0};
+        cubeRot = { pitch: 0, yaw: 0, roll: 0 };
         lastMotionTs = 0;
         updateVisualization();
     }
@@ -779,23 +783,23 @@ connectBtn.addEventListener('click', async () => {
             if (await DeviceMotionEvent.requestPermission() !== 'granted') {
                 alert('⚠️ 体感权限被拒，无法获取运动数据');
             }
-        } catch(e) {}
+        } catch (e) { }
     }
-    const proto = location.protocol==='https:'?'wss:':'ws:';
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     socket = new WebSocket(`${proto}//${location.host}/ws`);
     socket.onopen = () => {
-        statusEl.textContent='✅ 已连接'; statusEl.className='connected';
-        connectBtn.textContent='断开'; connectBtn.classList.add('connected');
+        statusEl.textContent = '✅ 已连接'; statusEl.className = 'connected';
+        connectBtn.textContent = '断开'; connectBtn.classList.add('connected');
         startSensor();  // 连接后立即启动体感(含重力), DSU 始终有有效重力数据
     };
     socket.onclose = () => {
-        statusEl.textContent='❌ 断开'; statusEl.className='disconnected';
-        connectBtn.textContent='连接'; connectBtn.classList.remove('connected');
+        statusEl.textContent = '❌ 断开'; statusEl.className = 'disconnected';
+        connectBtn.textContent = '连接'; connectBtn.classList.remove('connected');
         stopSensor();
     };
     socket.onerror = () => {
-        statusEl.textContent='❌ 错误'; statusEl.className='disconnected';
-        connectBtn.textContent='连接'; connectBtn.classList.remove('connected');
+        statusEl.textContent = '❌ 错误'; statusEl.className = 'disconnected';
+        connectBtn.textContent = '连接'; connectBtn.classList.remove('connected');
         stopSensor();
     };
 });
@@ -804,29 +808,29 @@ let lastDataStr = '';
 let idleFrames = 0;
 
 function buildPacket() {
-    const gyro = motionToggle.checked ? gyroData : {x:0, y:0, z:0};
+    const gyro = motionToggle.checked ? gyroData : { x: 0, y: 0, z: 0 };
     return JSON.stringify({
-        timestamp: Date.now()/1000, gyroscope: gyro, accelerometer: accelData,
+        timestamp: Date.now() / 1000, gyroscope: gyro, accelerometer: accelData,
         buttons: gamepadState.buttons, axes: gamepadState.axes, triggers: gamepadState.triggers
     });
 }
 
 function dataChanged() {
-    const g = motionToggle.checked ? gyroData : {x:0, y:0, z:0};
-    const sig = JSON.stringify({g:g, a:accelData, b:gamepadState.buttons, x:gamepadState.axes, t:gamepadState.triggers});
+    const g = motionToggle.checked ? gyroData : { x: 0, y: 0, z: 0 };
+    const sig = JSON.stringify({ g: g, a: accelData, b: gamepadState.buttons, x: gamepadState.axes, t: gamepadState.triggers });
     if (sig !== lastDataStr) { lastDataStr = sig; return true; }
     return false;
 }
 
 setInterval(() => {
     if (socket?.readyState !== WebSocket.OPEN) return;
-    
+
     if (motionToggle.checked) {
         socket.send(buildPacket());
         idleFrames = 0;
         return;
     }
-    
+
     if (dataChanged()) {
         socket.send(buildPacket());
         idleFrames = 0;
