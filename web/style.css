@@ -1,0 +1,151 @@
+/* === 基础重置 === */
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #121212; color: #eee; font-family: 'Segoe UI', sans-serif; touch-action: none; }
+
+/* === 顶部工具栏 === */
+.top-bar {
+    position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(0,0,0,0.9); box-sizing: border-box;
+    display: flex; justify-content: center; align-items: center;
+    gap: 6px; padding: 6px 8px; border-bottom: 1px solid #333;
+}
+
+/* === 底部工具栏 (强制单行) === */
+.bottom-bar {
+    position: absolute; bottom: 0; left: 0; width: 100%; z-index: 100;
+    background: rgba(0,0,0,0.9); box-sizing: border-box;
+    display: flex; flex-direction: row; justify-content: space-around; align-items: center;
+    padding: 8px 12px; border-top: 1px solid #333;
+    white-space: nowrap; overflow: hidden;
+}
+
+.top-btn, select { padding: 6px 14px; border: none; border-radius: 6px; background: #333; color: #eee; font-size: 13px; white-space: nowrap; flex-shrink: 0;}
+.edit-btn.active { background: #00d4ff; color: #000; }
+.switch-label { font-size: 13px; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+#connectBtn { padding: 8px 16px; border: none; border-radius: 6px; background: #007bff; color: white; font-size: 13px; flex-shrink: 0;}
+.connected { color: #4caf50; font-weight: bold; } .disconnected { color: #f44336; font-weight: bold; }
+#statusBox { font-size: 12px; overflow: hidden; text-overflow: ellipsis; max-width: 80px;}
+
+/* === 虚拟手柄安全区 === */
+.virtual-pad { position: absolute; left: 0; right: 0; pointer-events: none; user-select: none; -webkit-user-select: none; }
+
+/* === 摇杆样式 (文字绝对居中，无旋转) === */
+.v-stick {
+    position: absolute; pointer-events: auto;
+    width: 100px; height: 100px;
+    background: #4a4a4a; border-radius: 50%; border: 2.5px solid #999;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5); box-sizing: border-box;
+}
+.v-stick-knob {
+    width: 45px; height: 45px; background: #777; border-radius: 50%;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none; transition: transform 0.05s linear;
+}
+.v-stick-label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 11px; color: #ddd; font-weight: bold;
+    pointer-events: none; z-index: 2;
+}
+
+/* === 按钮基础样式 (移除所有 rotate) === */
+.v-btn {
+    position: absolute; pointer-events: auto;
+    display: flex; align-items: center; justify-content: center;
+    box-sizing: border-box; transition: filter 0.1s;
+    width: 50px; height: 50px; background: #5a5a5a; border-radius: 50%;
+    border: 2.5px solid #aaa; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    font-weight: bold; font-size: 16px; color: #fff;
+}
+.v-btn.pressed { filter: brightness(1.4); background: #00aacc !important; }
+.dpad-btn { width: 40px; height: 40px; border-radius: 8px; font-size: 18px; background: #5a5a5a; }
+.small-btn { width: 60px; height: 28px; border-radius: 14px; font-size: 11px; background: #5a5a5a; }
+.trigger-btn { width: 70px; height: 45px; border-radius: 10px; background: #3a3a3a; position: absolute; display: flex; align-items: center; justify-content: center; }
+.trigger-track { position: absolute; top: 7px; bottom: 7px; left: 50%; transform: translateX(-50%); width: 10px; background: #222; border-radius: 5px; pointer-events: none; overflow: hidden; }
+.trigger-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to bottom, #00ddff, #0088aa); border-radius: 0 0 5px 5px; transition: height 0.03s linear; pointer-events: none; }
+.trigger-thumb { position: absolute; left: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; background: radial-gradient(circle at 35% 35%, #eee, #999); border-radius: 50%; border: 2px solid #fff; top: 0%; pointer-events: none; z-index: 2; box-shadow: 0 1px 3px rgba(0,0,0,0.5); transition: top 0.03s linear; }
+.trigger-text { position: relative; z-index: 3; pointer-events: none; font-size: 10px; color: #fff; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+
+/* === 预设颜色 === */
+.preset-xbox .btn-a { background: #4caf50; } .preset-xbox .btn-b { background: #f44336; }
+.preset-xbox .btn-x { background: #2196f3; } .preset-xbox .btn-y { background: #ffeb3b; color: #000; }
+/* .preset-ps .btn-a { background: #2196f3; } .preset-ps .btn-b { background: #f44336; }
+.preset-ps .btn-x { background: #e91e63; } .preset-ps .btn-y { background: #9c27b0; } */
+.preset-switch .btn-a { background: #f44336; } .preset-switch .btn-b { background: #ffeb3b; color: #000; }
+.preset-switch .btn-x { background: #4caf50; } .preset-switch .btn-y { background: #2196f3; }
+.preset-gba .btn-a { background: #f44336; } .preset-gba .btn-b { background: #ff9800; }
+.preset-motion .v-btn { background: #00838f; }
+
+/* === 编辑模式 === */
+.edit-mode .v-btn, .edit-mode .v-stick { border: 2px dashed #00d4ff !important; background: rgba(0,212,255,0.15) !important; cursor: move; }
+
+/* === 3D 体感 === */
+.motion-visual { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); perspective: 600px; z-index: 5; text-align: center; pointer-events: none; }
+.cube { width: 80px; height: 80px; position: relative; transform-style: preserve-3d; transition: transform 0.05s linear; }
+.face { position: absolute; width: 80px; height: 80px; background: rgba(0,212,255,0.6); border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+.front { transform: translateZ(40px); } .back { transform: rotateY(180deg) translateZ(40px); }
+.left { transform: rotateY(-90deg) translateZ(40px); } .right { transform: rotateY(90deg) translateZ(40px); }
+.top { transform: rotateX(90deg) translateZ(40px); } .bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+/* 立方体本地坐标轴 (随立方体旋转) */
+.axis { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.axis-line { position: absolute; width: 3px; height: 40px; top: -40px; left: -1.5px; border-radius: 1px; }
+.axis-arrow { position: absolute; width: 0; height: 0; top: -47px; left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff; }
+.axis-label { position: absolute; top: -57px; left: -8px; width: 16px; text-align: center; font-size: 11px; font-weight: bold; }
+.axis-x { transform: rotateZ(90deg); } .axis-x .axis-line { background: #ff4444; } .axis-x .axis-arrow { border-top-color: #ff4444; } .axis-x .axis-label { color: #ff4444; }
+.axis-y { } .axis-y .axis-line { background: #44ff44; } .axis-y .axis-arrow { border-top-color: #44ff44; } .axis-y .axis-label { color: #44ff44; }
+.axis-z { transform: rotateX(-90deg); } .axis-z .axis-line { background: #4488ff; } .axis-z .axis-arrow { border-top-color: #4488ff; } .axis-z .axis-label { color: #4488ff; }
+
+/* 世界坐标轴 (固定不旋转) */
+.world-axes { margin-top: 8px; display: flex; gap: 12px; justify-content: center; font-size: 11px; }
+.wa-x { color: #ff4444; } .wa-y { color: #44ff44; } .wa-z { color: #4488ff; }
+
+.motion-data { margin-top: 5px; font-size: 11px; color: #aaa; width: 152px; text-align: left;}
+.hidden { display: none !important; }
+
+/* === 编辑模式：显隐切换 + 码值标签 === */
+.edit-mode .v-hidden { opacity: 0.25; filter: grayscale(1); }
+.vis-toggle {
+    position: absolute; top: -14px; right: -14px; width: 26px; height: 26px;
+    border-radius: 50%; background: rgba(0,0,0,0.8); border: 1.5px solid #fff;
+    color: #fff; font-size: 13px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; z-index: 20; pointer-events: auto;
+    line-height: 1; user-select: none; -webkit-user-select: none;
+}
+.key-tag {
+    position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+    font-size: 9px; color: #ffcc00; background: rgba(0,0,0,0.7);
+    padding: 1px 5px; border-radius: 4px; white-space: nowrap;
+    pointer-events: none; z-index: 15; font-family: monospace;
+}
+
+/* === 编辑模式：多选 === */
+.edit-mode .selected { border-color: #ffcc00 !important; box-shadow: 0 0 8px #ffcc00; }
+
+/* === 对齐辅助线 (底色) === */
+.align-guide { position: absolute; pointer-events: none; z-index: 999; }
+
+/* === 排列工具栏 (多行 + 拖拽手柄) === */
+.align-toolbar {
+    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.88); border-radius: 10px; padding: 6px 8px;
+    display: flex; flex-direction: column; gap: 5px; z-index: 100;
+    pointer-events: auto; border: 1px solid #555; min-width: 180px;
+}
+.tb-handle {
+    display: flex; justify-content: center; padding: 4px 0 2px 0;
+    cursor: grab; border-bottom: 1px solid #444; margin-bottom: 2px;
+}
+.tb-dots { color: #888; font-size: 18px; line-height: 1; user-select: none; -webkit-user-select: none; }
+.tb-row { display: flex; align-items: center; gap: 4px; }
+.tb-row span { color: #999; font-size: 11px; min-width: 28px; text-align: right; }
+.align-toolbar button {
+    padding: 6px 12px; border: 1px solid #666; border-radius: 6px;
+    background: #555; color: #fff; font-size: 14px; cursor: pointer;
+    font-family: monospace; line-height: 1.2; font-weight: bold; flex: 1;
+}
+.align-toolbar button:active { background: #00d4ff; color: #000; }
+.tb-hdr { display: flex; align-items: center; gap: 6px; justify-content: space-between; padding-bottom: 3px; margin-bottom: 2px; border-bottom: 1px solid #444; }
+.tb-count { color: #0cf; font-size: 12px; font-weight: bold; white-space: nowrap; }
+.tb-desel { padding: 2px 8px; border: 1px solid #c33; border-radius: 4px; background: #822; color: #fff; font-size: 11px; cursor: pointer; font-family: monospace; line-height: 1.4; }
+.tb-desel:active { background: #c33; }
+/* 隐藏元素的选中态依然可见 */
+.edit-mode .v-hidden.selected { border-color: #ffcc00 !important; box-shadow: 0 0 12px #ffcc00; opacity: 0.5; }

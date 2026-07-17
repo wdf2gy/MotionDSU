@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 允许系统自由旋转屏幕 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>全能虚拟体感手柄</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部工具栏 -->
+    <div class="top-bar">
+        <label class="switch-label"><input type="checkbox" id="motionToggle"> 开启体感</label>
+        <button id="editModeBtn" class="top-btn edit-btn">✏️ 编辑布局</button>
+        <select id="presetSelect"></select>
+    </div>
+
+    <!-- 体感 3D 可视化 -->
+    <div id="motionVisual" class="motion-visual hidden">
+        <div class="cube">
+            <div class="face front">前</div><div class="face back">后</div>
+            <div class="face left">左</div><div class="face right">右</div>
+            <div class="face top">上</div><div class="face bottom">下</div>
+            <div class="axis axis-x"><div class="axis-line"></div><div class="axis-arrow"></div><div class="axis-label">X</div></div>
+            <div class="axis axis-y"><div class="axis-line"></div><div class="axis-arrow"></div><div class="axis-label">Y</div></div>
+            <div class="axis axis-z"><div class="axis-line"></div><div class="axis-arrow"></div><div class="axis-label">Z</div></div>
+        </div>
+        <div class="world-axes">
+            <span class="wa wa-x">X →</span>
+            <span class="wa wa-y">Y ↑</span>
+            <span class="wa wa-z">Z ⊙</span>
+        </div>
+        <div class="motion-data gyro-data">陀螺仪: X:0 Y:0 Z:0</div>
+        <div class="motion-data accel-data">加速度: X:0 Y:0 Z:0</div>
+    </div>
+
+    <!-- 虚拟手柄安全区 -->
+    <div class="virtual-pad" id="virtualPad"></div>
+
+    <!-- 底部工具栏：强制单行 -->
+    <div class="bottom-bar">
+        <button id="exportBtn" class="top-btn">📤 导出</button>
+        <button id="importBtn" class="top-btn">📥 导入</button>
+        <button id="connectBtn">🔗 连接</button>
+        <span id="statusBox">未连接</span>
+        <!-- <span id="orientationStatus">--</span> -->
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+
+    <script src="main.js"></script>
+</body>
+</html>
