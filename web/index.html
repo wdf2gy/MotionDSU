@@ -10,7 +10,12 @@
 <body>
     <!-- 顶部工具栏 -->
     <div class="top-bar">
-        <label class="switch-label"><input type="checkbox" id="motionToggle"> 开启体感</label>
+        <select id="motionMode">
+            <option value="off" selected>体感：关闭</option>
+            <option value="gyro">体感：仅陀螺仪</option>
+            <option value="accel">体感：仅加速度计</option>
+            <option value="both">体感：全部使用</option>
+        </select>
         <button id="editModeBtn" class="top-btn edit-btn">✏️ 编辑布局</button>
         <select id="presetSelect"></select>
     </div>
@@ -43,7 +48,7 @@
         <button id="importBtn" class="top-btn">📥 导入</button>
         <button id="connectBtn">🔗 连接</button>
         <span id="statusBox">未连接</span>
-        <!-- <span id="orientationStatus">--</span> -->
+        <span id="phyInfo" class="phy-info">🎮 未连接</span>
     </div>
     <input type="file" id="importFile" accept=".json" style="display:none">
 

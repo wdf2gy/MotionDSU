@@ -4,5 +4,4 @@ __pycache__/
 .env
 web/cert.pem
 web/key.pem
-sync_public.sh
 libs/

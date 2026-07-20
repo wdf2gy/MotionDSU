@@ -58,6 +58,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .v-btn.pressed { filter: brightness(1.4); background: #00aacc !important; }
 .dpad-btn { width: 40px; height: 40px; border-radius: 8px; font-size: 18px; background: #5a5a5a; }
 .small-btn { width: 60px; height: 28px; border-radius: 14px; font-size: 11px; background: #5a5a5a; }
+.btn-l3, .btn-r3 { width: 40px; height: 24px; border-radius: 12px; font-size: 9px; background: #4a4a4a; border: 1.5px solid #888; }
 .trigger-btn { width: 70px; height: 45px; border-radius: 10px; background: #3a3a3a; position: absolute; display: flex; align-items: center; justify-content: center; }
 .trigger-track { position: absolute; top: 7px; bottom: 7px; left: 50%; transform: translateX(-50%); width: 10px; background: #222; border-radius: 5px; pointer-events: none; overflow: hidden; }
 .trigger-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to bottom, #00ddff, #0088aa); border-radius: 0 0 5px 5px; transition: height 0.03s linear; pointer-events: none; }
@@ -78,27 +79,29 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .edit-mode .v-btn, .edit-mode .v-stick { border: 2px dashed #00d4ff !important; background: rgba(0,212,255,0.15) !important; cursor: move; }
 
 /* === 3D 体感 === */
-.motion-visual { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); perspective: 600px; z-index: 5; text-align: center; pointer-events: none; }
-.cube { width: 80px; height: 80px; position: relative; transform-style: preserve-3d; transition: transform 0.05s linear; }
-.face { position: absolute; width: 80px; height: 80px; background: rgba(0,212,255,0.6); border: 1px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-.front { transform: translateZ(40px); } .back { transform: rotateY(180deg) translateZ(40px); }
-.left { transform: rotateY(-90deg) translateZ(40px); } .right { transform: rotateY(90deg) translateZ(40px); }
-.top { transform: rotateX(90deg) translateZ(40px); } .bottom { transform: rotateX(-90deg) translateZ(40px); }
+.motion-visual { position: absolute; top: 50%; left: 35%; transform: translate(-50%, -50%); perspective: 400px; z-index: 5; text-align: center; pointer-events: none; padding: 4px; border-radius: 8px; }
+body.edit-mode .motion-visual { pointer-events: auto; cursor: move; border: 2px dashed #00d4ff; background: rgba(0,212,255,0.08); touch-action: auto; }
+body.edit-mode .motion-visual.hidden { display: block !important; }
+.cube { width: 70px; height: 70px; position: relative; transform-style: preserve-3d; transition: transform 0.05s linear; }
+.face { position: absolute; width: 70px; height: 70px; background: rgba(0,212,255,0.5); border: 1.5px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8); }
+.front { transform: translateZ(35px); } .back { transform: rotateY(180deg) translateZ(35px); }
+.left { transform: rotateY(-90deg) translateZ(35px); } .right { transform: rotateY(90deg) translateZ(35px); }
+.top { transform: rotateX(90deg) translateZ(35px); } .bottom { transform: rotateX(-90deg) translateZ(35px); }
 
 /* 立方体本地坐标轴 (随立方体旋转) */
 .axis { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
-.axis-line { position: absolute; width: 3px; height: 40px; top: -40px; left: -1.5px; border-radius: 1px; }
-.axis-arrow { position: absolute; width: 0; height: 0; top: -47px; left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff; }
-.axis-label { position: absolute; top: -57px; left: -8px; width: 16px; text-align: center; font-size: 11px; font-weight: bold; }
+.axis-line { position: absolute; width: 3px; height: 40px; top: -40px; left: -1.5px; border-radius: 2px; }
+.axis-arrow { position: absolute; width: 0; height: 0; top: -46px; left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #fff; }
+.axis-label { position: absolute; top: -54px; left: -7px; width: 14px; text-align: center; font-size: 11px; font-weight: bold; }
 .axis-x { transform: rotateZ(90deg); } .axis-x .axis-line { background: #ff4444; } .axis-x .axis-arrow { border-top-color: #ff4444; } .axis-x .axis-label { color: #ff4444; }
 .axis-y { } .axis-y .axis-line { background: #44ff44; } .axis-y .axis-arrow { border-top-color: #44ff44; } .axis-y .axis-label { color: #44ff44; }
 .axis-z { transform: rotateX(-90deg); } .axis-z .axis-line { background: #4488ff; } .axis-z .axis-arrow { border-top-color: #4488ff; } .axis-z .axis-label { color: #4488ff; }
 
 /* 世界坐标轴 (固定不旋转) */
-.world-axes { margin-top: 8px; display: flex; gap: 12px; justify-content: center; font-size: 11px; }
+.world-axes { margin-top: 4px; display: flex; gap: 8px; justify-content: center; font-size: 9px; }
 .wa-x { color: #ff4444; } .wa-y { color: #44ff44; } .wa-z { color: #4488ff; }
 
-.motion-data { margin-top: 5px; font-size: 11px; color: #aaa; width: 152px; text-align: left;}
+.motion-data { margin-top: 3px; font-size: 11px; color: #ddd; width: 160px; text-align: left; font-family: 'Courier New', monospace; white-space: pre; }
 .hidden { display: none !important; }
 
 /* === 编辑模式：显隐切换 + 码值标签 === */
@@ -111,11 +114,14 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     line-height: 1; user-select: none; -webkit-user-select: none;
 }
 .key-tag {
-    position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
-    font-size: 9px; color: #ffcc00; background: rgba(0,0,0,0.7);
-    padding: 1px 5px; border-radius: 4px; white-space: nowrap;
-    pointer-events: none; z-index: 15; font-family: monospace;
+    position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: #ffcc00; background: rgba(0,0,0,0.85);
+    padding: 2px 8px; border-radius: 6px; white-space: nowrap;
+    pointer-events: none; z-index: 25; font-family: monospace;
+    border: 1px solid rgba(255,204,0,0.3);
 }
+.edit-mode .key-tag { pointer-events: auto; touch-action: auto; z-index: 30; }
+.edit-mode .key-tag span { touch-action: auto; }
 
 /* === 编辑模式：多选 === */
 .edit-mode .selected { border-color: #ffcc00 !important; box-shadow: 0 0 8px #ffcc00; }
@@ -149,3 +155,6 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .tb-desel:active { background: #c33; }
 /* 隐藏元素的选中态依然可见 */
 .edit-mode .v-hidden.selected { border-color: #ffcc00 !important; box-shadow: 0 0 12px #ffcc00; opacity: 0.5; }
+/* 物理手柄按键反馈 */
+.phy-active { box-shadow: 0 0 15px #00ff88 !important; border-color: #00ff88 !important; }
+.phy-info { font-size: 11px; color: #0c0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; flex-shrink: 1; }

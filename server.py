@@ -322,9 +322,9 @@ async def handle_phone(request):
                     
                     # 只有当有按键或摇杆变化时才打印，避免刷屏
                     # or any(abs(axis) > 0.1 for axis in axes)
-                    if buttons > 0  or any(trigger > 0.1 for trigger in triggers):
+                    if buttons > 0 or any(trigger > 0.1 for trigger in triggers) or any(abs(a) > 0.1 for a in axes):
                         pressed = [str(i + 1) for i in range(15) if buttons & (1 << i)]
-                        print(f"🎮 按钮: {'+'.join(pressed) or '无'}, 摇杆: {axes}, 扳机: {triggers}")
+                        print(f"[{datetime.now().strftime('%H:%M:%S')}] 🎮 按钮: {'+'.join(pressed) or '无'}, 摇杆: {axes}, 扳机: {triggers}")
                     
                     # 写入 vJoy
                     vjoy.update(buttons, axes, triggers)

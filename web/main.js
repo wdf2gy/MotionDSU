@@ -12,7 +12,8 @@ const DEFAULT_LAYOUT = {
         shoulderL: { x: 5, y: 5, show: true }, shoulderR: { x: 82, y: 5, show: true },
         triggerL: { x: 5, y: 15, show: true }, triggerR: { x: 82, y: 15, show: true },
         btnSelect: { x: 38, y: 90, show: true }, btnStart: { x: 62, y: 90, show: true },
-        btnHome: { x: 50, y: 90, show: true }
+        btnHome: { x: 50, y: 90, show: true },
+        btnL3: { x: 16, y: 62, show: true }, btnR3: { x: 74, y: 62, show: true }
     },
     portrait: {
         stickL: { x: 15, y: 78, show: true }, stickR: { x: 85, y: 78, show: true },
@@ -23,7 +24,8 @@ const DEFAULT_LAYOUT = {
         shoulderL: { x: 10, y: 5, show: true }, shoulderR: { x: 72, y: 5, show: true },
         triggerL: { x: 10, y: 15, show: true }, triggerR: { x: 72, y: 15, show: true },
         btnSelect: { x: 35, y: 92, show: true }, btnStart: { x: 65, y: 92, show: true },
-        btnHome: { x: 50, y: 92, show: true }
+        btnHome: { x: 50, y: 92, show: true },
+        btnL3: { x: 22, y: 68, show: true }, btnR3: { x: 78, y: 68, show: true }
     }
 };
 
@@ -81,23 +83,25 @@ const LAYOUT_CONFIG = {
 };
 
 const CONTROL_META = {
-    stickL: { cls: 'v-stick left-stick', key: null, type: 'stick' },
-    stickR: { cls: 'v-stick right-stick', key: null, type: 'stick' },
-    btnA: { cls: 'v-btn btn-a', key: 0, type: 'btn' },
-    btnB: { cls: 'v-btn btn-b', key: 1, type: 'btn' },
-    btnX: { cls: 'v-btn btn-x', key: 2, type: 'btn' },
-    btnY: { cls: 'v-btn btn-y', key: 3, type: 'btn' },
-    shoulderL: { cls: 'v-btn shoulder-l small-btn', key: 4, type: 'btn' },
-    shoulderR: { cls: 'v-btn shoulder-r small-btn', key: 5, type: 'btn' },
-    triggerL: { cls: 'v-btn trigger-l trigger-btn', key: null, type: 'trigger' },
-    triggerR: { cls: 'v-btn trigger-r trigger-btn', key: null, type: 'trigger' },
-    btnSelect: { cls: 'v-btn btn-select small-btn', key: 6, type: 'btn' },
-    btnStart: { cls: 'v-btn btn-start small-btn', key: 7, type: 'btn' },
-    btnHome: { cls: 'v-btn btn-home small-btn', key: 10, type: 'btn' },
-    dpadUp: { cls: 'v-btn dpad-up dpad-btn', key: 11, type: 'btn' },
-    dpadDown: { cls: 'v-btn dpad-down dpad-btn', key: 12, type: 'btn' },
-    dpadLeft: { cls: 'v-btn dpad-left dpad-btn', key: 13, type: 'btn' },
-    dpadRight: { cls: 'v-btn dpad-right dpad-btn', key: 14, type: 'btn' }
+    stickL:    { cls: 'v-stick left-stick', key: null, type: 'stick' },
+    stickR:    { cls: 'v-stick right-stick', key: null, type: 'stick' },
+    btnA:      { cls: 'v-btn btn-a', key: 0, type: 'btn', phyIdx: 0 },
+    btnB:      { cls: 'v-btn btn-b', key: 1, type: 'btn', phyIdx: 1 },
+    btnX:      { cls: 'v-btn btn-x', key: 2, type: 'btn', phyIdx: 2 },
+    btnY:      { cls: 'v-btn btn-y', key: 3, type: 'btn', phyIdx: 3 },
+    shoulderL: { cls: 'v-btn shoulder-l small-btn', key: 4, type: 'btn', phyIdx: 4 },
+    shoulderR: { cls: 'v-btn shoulder-r small-btn', key: 5, type: 'btn', phyIdx: 5 },
+    triggerL:  { cls: 'v-btn trigger-l trigger-btn', key: null, type: 'trigger', phyIdx: 6 },
+    triggerR:  { cls: 'v-btn trigger-r trigger-btn', key: null, type: 'trigger', phyIdx: 7 },
+    btnSelect: { cls: 'v-btn btn-select small-btn', key: 6, type: 'btn', phyIdx: 8 },
+    btnStart:  { cls: 'v-btn btn-start small-btn', key: 7, type: 'btn', phyIdx: 9 },
+    btnHome:   { cls: 'v-btn btn-home small-btn', key: 10, type: 'btn', phyIdx: 12 },
+    btnL3:     { cls: 'v-btn btn-l3 small-btn', key: 8, type: 'btn', phyIdx: 10 },
+    btnR3:     { cls: 'v-btn btn-r3 small-btn', key: 9, type: 'btn', phyIdx: 11 },
+    dpadUp:    { cls: 'v-btn dpad-up dpad-btn', key: 11, type: 'btn', phyIdx: 13 },
+    dpadDown:  { cls: 'v-btn dpad-down dpad-btn', key: 12, type: 'btn', phyIdx: 14 },
+    dpadLeft:  { cls: 'v-btn dpad-left dpad-btn', key: 13, type: 'btn', phyIdx: 15 },
+    dpadRight: { cls: 'v-btn dpad-right dpad-btn', key: 14, type: 'btn', phyIdx: 16 }
 };
 
 // ==========================================
@@ -142,18 +146,19 @@ function renderControls() {
     Object.entries(CONTROL_META).forEach(([id, meta]) => {
         const pos = config[id];
         if (!pos) return;
-        // 编辑模式下渲染所有控件（含隐藏的）；普通模式跳过隐藏的
         if (!isEditMode && !pos.show) return;
 
         const el = document.createElement('div');
         el.className = meta.cls;
         el.dataset.controlId = id;
-        if (meta.key !== null) el.dataset.key = meta.key;
+        // 使用布局中覆盖的 key（如有），否则用 CONTROL_META 默认
+        const overrideKey = (saved && saved[id] && saved[id].key !== undefined) ? saved[id].key : meta.key;
+        if (overrideKey !== null) el.dataset.key = overrideKey;
         if (meta.type === 'stick') el.id = id;
 
         el.style.left = `${pos.x}%`;
         el.style.top = `${pos.y}%`;
-        el.style.transform = 'translate(-50%, -50%)'; // 纯居中，无旋转
+        el.style.transform = 'translate(-50%, -50%)';
 
         if (meta.type === 'stick') {
             const label = pos.label || (id === 'stickL' ? 'L' : 'R');
@@ -164,7 +169,6 @@ function renderControls() {
             el.textContent = pos.text || getDefaultText(id);
         }
 
-        // 编辑模式：显隐切换 + 按键码值显示
         if (isEditMode) {
             if (!pos.show) el.classList.add('v-hidden');
             const toggle = document.createElement('div');
@@ -179,25 +183,62 @@ function renderControls() {
                 saveCustomLayout(true);
             });
             el.appendChild(toggle);
-            // 按键码值标签
-            const keyTag = document.createElement('div');
-            keyTag.className = 'key-tag';
-            if (meta.key !== null) {
-                keyTag.textContent = `#${meta.key}`;
+
+            // 按键映射标签（可点击编辑）
+            const tagWrap = document.createElement('div');
+            tagWrap.className = 'key-tag';
+            tagWrap.style.display = 'flex';
+            tagWrap.style.gap = '6px';
+
+            // DSU key 标签
+            const keyLabel = document.createElement('span');
+            if (overrideKey !== null) {
+                keyLabel.textContent = `#${overrideKey}`;
             } else if (id === 'stickL') {
-                keyTag.textContent = '#8(L3)';
+                keyLabel.textContent = '#8(L3)';
             } else if (id === 'stickR') {
-                keyTag.textContent = '#9(R3)';
+                keyLabel.textContent = '#9(R3)';
             } else if (meta.type === 'trigger') {
-                keyTag.textContent = 'ANA';
+                keyLabel.textContent = 'ANA';
             }
-            el.appendChild(keyTag);
+            keyLabel.style.cursor = 'pointer';
+            function startKeyLearn(e) {
+                e.stopPropagation();
+                _mappingTarget = { el, label: keyLabel, type: 'key', ts: Date.now() };
+                keyLabel.textContent = '?';
+                el.style.outline = '2px solid #ff0';
+            }
+            keyLabel.addEventListener('touchstart', (e) => { e.stopPropagation(); startKeyLearn(e); });
+            keyLabel.addEventListener('click', startKeyLearn);
+            tagWrap.appendChild(keyLabel);
+
+            // 物理映射标签
+            const defaultPhy = (meta.phyIdx !== undefined) ? meta.phyIdx : -1;
+            const overridePhy = (saved && saved[id] && saved[id].phyIndex !== undefined) ? saved[id].phyIndex : defaultPhy;
+            if (overridePhy >= 0) {
+                const phyLabel = document.createElement('span');
+                phyLabel.textContent = `P:${overridePhy}`;
+                phyLabel.style.cursor = 'pointer';
+                phyLabel.style.color = '#8cf';
+                function startPhyLearn(e) {
+                    e.stopPropagation();
+                    _mappingTarget = { el, label: phyLabel, type: 'phy', ts: Date.now() };
+                    phyLabel.textContent = '?';
+                    el.style.outline = '2px solid #ff0';
+                }
+                phyLabel.addEventListener('touchstart', (e) => { e.stopPropagation(); startPhyLearn(e); });
+                phyLabel.addEventListener('click', startPhyLearn);
+                tagWrap.appendChild(phyLabel);
+            }
+
+            el.appendChild(tagWrap);
         }
 
         virtualPad.appendChild(el);
     });
 
     loadCustomLayout();
+    rebuildPhyMapping();
 }
 
 function getDefaultText(id) {
@@ -205,6 +246,7 @@ function getDefaultText(id) {
         btnA: 'A', btnB: 'B', btnX: 'X', btnY: 'Y',
         shoulderL: 'LB', shoulderR: 'RB', triggerL: 'LT', triggerR: 'RT',
         btnSelect: 'SEL', btnStart: 'START', btnHome: 'HOME',
+        btnL3: 'L3', btnR3: 'R3',
         dpadUp: '↑', dpadDown: '↓', dpadLeft: '←', dpadRight: '→'
     };
     return m[id] || '';
@@ -228,6 +270,7 @@ window.addEventListener('resize', () => {
     if (newOrient !== currentOrientation) {
         currentOrientation = newOrient;
         renderControls();
+        loadMotionPos();
     }
 });
 new ResizeObserver(updateSafeArea).observe(document.querySelector('.top-bar'));
@@ -241,11 +284,23 @@ function getStorageKey() { return `layout_${currentPreset}_${currentOrientation}
 function saveCustomLayout(silent) {
     const custom = {};
     virtualPad.querySelectorAll('[data-control-id]').forEach(el => {
-        custom[el.dataset.controlId] = {
+        const entry = {
             left: el.style.left,
             top: el.style.top,
             show: !el.classList.contains('v-hidden')
         };
+        const ctrlId = el.dataset.controlId;
+        const meta = CONTROL_META[ctrlId];
+        // 读取映射覆盖（来自 DOM 数据集，由点击编辑写入）
+        if (el.dataset.mappedKey !== undefined) {
+            const n = parseInt(el.dataset.mappedKey);
+            if (!isNaN(n) && (!meta || n !== meta.key)) entry.key = n;
+        }
+        if (el.dataset.mappedPhy !== undefined) {
+            const n = parseInt(el.dataset.mappedPhy);
+            if (!isNaN(n) && (!meta || n !== meta.phyIdx)) entry.phyIndex = n;
+        }
+        custom[ctrlId] = entry;
     });
     localStorage.setItem(getStorageKey(), JSON.stringify(custom));
     if (!silent) alert(`✅ ${currentPreset} ${currentOrientation === 'landscape' ? '横屏' : '竖屏'} 布局已保存`);
@@ -338,14 +393,49 @@ let alignGuides = [];
 let tapStart = { x: 0, y: 0 };
 let tapMoved = false;
 
+function getMotionPosKey() { return `motionPos_${currentPreset}_${currentOrientation}`; }
+
+function saveMotionPos() {
+    const mv = document.getElementById('motionVisual');
+    if (!mv) return;
+    localStorage.setItem(getMotionPosKey(), JSON.stringify({
+        left: mv.style.left, top: mv.style.top
+    }));
+}
+
+function loadMotionPos() {
+    const mv = document.getElementById('motionVisual');
+    if (!mv) return;
+    const saved = JSON.parse(localStorage.getItem(getMotionPosKey()));
+    if (saved) {
+        if (saved.left) mv.style.left = saved.left;
+        if (saved.top) mv.style.top = saved.top;
+    }
+}
+
 editModeBtn.addEventListener('click', () => {
     isEditMode = !isEditMode;
     if (isEditMode) { clearSelection(); resetOutOfBounds(); }
-    else saveCustomLayout();
+    else { saveCustomLayout(); saveMotionPos(); }
     renderControls();
+    document.body.classList.toggle('edit-mode', isEditMode);
     virtualPad.classList.toggle('edit-mode', isEditMode);
     editModeBtn.classList.toggle('active', isEditMode);
     editModeBtn.textContent = isEditMode ? '💾 保存布局' : '✏️ 编辑布局';
+    // 强制编辑模式下可视化区域可见可交互
+    const mv = document.getElementById('motionVisual');
+    if (mv) {
+        if (isEditMode) {
+            const wasHidden = mv.classList.contains('hidden');
+            if (wasHidden) mv.dataset.wasHidden = '1';
+            mv.style.pointerEvents = 'auto';
+            mv.style.display = 'block';
+        } else {
+            mv.style.pointerEvents = '';
+            mv.style.display = '';
+            if (mv.dataset.wasHidden) { mv.classList.add('hidden'); delete mv.dataset.wasHidden; }
+        }
+    }
 });
 
 function resetOutOfBounds() {
@@ -460,9 +550,11 @@ let dragGroup = null;
 
 // ----- 编辑模式触控 -----
 virtualPad.addEventListener('touchstart', (e) => {
-    if (!isEditMode) return; e.preventDefault();
+    if (!isEditMode) return;
     const t = e.touches[0];
-    if (e.target?.closest?.('.align-toolbar') || e.target?.classList?.contains('vis-toggle')) return;
+    // 允许这些元素产生 click 事件（不 preventDefault）
+    if (e.target?.closest?.('.align-toolbar') || e.target?.classList?.contains('vis-toggle') || e.target?.closest?.('.key-tag')) return;
+    e.preventDefault();
     const ctrl = document.elementFromPoint(t.clientX, t.clientY)?.closest('[data-control-id]');
     if (!ctrl) return;
     tapStart = { x: t.clientX, y: t.clientY }; tapMoved = false; clearGuides();
@@ -523,6 +615,33 @@ document.addEventListener('touchend', () => {
     clearGuides(); dragTarget = null; tapMoved = false;
 });
 
+// ----- 体感可视化拖拽（编辑模式下）-----
+let mvDragOffX = 0, mvDragOffY = 0;
+
+function initMotionVisualDrag() {
+    const mv = document.getElementById('motionVisual');
+    if (!mv) return;
+    mv.addEventListener('touchstart', (e) => {
+        if (!isEditMode) return; e.stopPropagation();
+        const t = e.touches[0];
+        const r = mv.getBoundingClientRect();
+        mvDragOffX = t.clientX - r.left;
+        mvDragOffY = t.clientY - r.top;
+    }, { passive: true });
+    mv.addEventListener('touchmove', (e) => {
+        if (!isEditMode) return; e.preventDefault(); e.stopPropagation();
+        const t = e.touches[0];
+        const pr = mv.parentElement?.getBoundingClientRect() || { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+        const pctX = ((t.clientX - mvDragOffX - pr.left) / pr.width) * 100;
+        const pctY = ((t.clientY - mvDragOffY - pr.top) / pr.height) * 100;
+        mv.style.left = `${Math.max(5, Math.min(95, pctX))}%`;
+        mv.style.top = `${Math.max(5, Math.min(95, pctY))}%`;
+        mv.style.transform = 'translate(-50%, -50%)';
+    }, { passive: false });
+}
+
+initMotionVisualDrag();
+
 // ==========================================
 // 6. 预设管理 & 切换
 // ==========================================
@@ -563,7 +682,7 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
                 currentPreset = key; saveCustomLayout(true);
                 list.push(key); localStorage.setItem('custom_presets', JSON.stringify(list));
                 initPresetSelect(); document.getElementById('presetSelect').value = key;
-                document.body.className = `preset-${currentPreset}`; renderControls();
+                document.body.className = `preset-${currentPreset}`; renderControls(); loadMotionPos();
             }
         }
         initPresetSelect(); return;
@@ -574,13 +693,13 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
             localStorage.setItem('custom_presets', JSON.stringify(list));
             ['landscape', 'portrait'].forEach(o => localStorage.removeItem(`layout_${currentPreset}_${o}`));
             currentPreset = 'xbox'; initPresetSelect(); document.getElementById('presetSelect').value = 'xbox';
-            document.body.className = 'preset-xbox'; renderControls();
+            document.body.className = 'preset-xbox'; renderControls(); loadMotionPos();
         } else { initPresetSelect(); }
         return;
     }
     currentPreset = v;
     document.body.className = `preset-${currentPreset}`;
-    renderControls();
+    renderControls(); loadMotionPos();
 });
 
 // ==========================================
@@ -588,6 +707,135 @@ document.getElementById('presetSelect').addEventListener('change', (e) => {
 // ==========================================
 const activeTouches = new Map();
 let gamepadState = { buttons: 0, axes: [0, 0, 0, 0], triggers: [0, 0] };
+
+// 物理手柄支持
+let PHY_BTN_TO_KEY = [];  // 索引 → key 位，由 rebuildPhyMapping 动态构建
+let PHY_BTN_TO_CID = [];  // 索引 → control ID
+let _touchButtons = 0;  // 仅虚拟触控按钮状态
+let _phyButtons = 0;    // 仅物理手柄按钮状态
+let _touchTriggers = [0, 0];  // 仅虚拟触控扳机状态
+let _phyTriggers = [0, 0];    // 仅物理手柄扳机状态
+let _mappingTarget = null;  // { el, label, type:'key'|'phy', ts }
+
+function rebuildPhyMapping() {
+    const saved = JSON.parse(localStorage.getItem(getStorageKey())) || {};
+    const maxIdx = 20;
+    PHY_BTN_TO_KEY = new Array(maxIdx).fill(null);
+    PHY_BTN_TO_CID = new Array(maxIdx).fill('');
+    Object.entries(CONTROL_META).forEach(([id, meta]) => {
+        if (meta.phyIdx === undefined) return;
+        const override = saved[id];
+        const phyIdx = (override && override.phyIndex !== undefined) ? override.phyIndex : meta.phyIdx;
+        if (phyIdx === undefined || phyIdx < 0 || phyIdx >= maxIdx) return;
+        const key = (override && override.key !== undefined) ? override.key : meta.key;
+        PHY_BTN_TO_KEY[phyIdx] = key;
+        PHY_BTN_TO_CID[phyIdx] = id;
+    });
+}
+let phyConnected = false;
+let phyName = '';
+const STICK_MAX = 45;
+
+function setStickVisual(id, nx, ny) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const knob = el.querySelector('.v-stick-knob');
+    if (!knob) return;
+    knob.style.transform = `translate(calc(-50% + ${nx * STICK_MAX}px), calc(-50% + ${-ny * STICK_MAX}px))`;
+}
+
+function readPhysicalGamepad() {
+    const gps = navigator.getGamepads?.();
+    if (!gps) return;
+    const pad = [...gps].find(p => p?.connected);
+    const phy = document.getElementById('phyInfo');
+    // 映射学习超时清除
+    if (_mappingTarget && Date.now() - _mappingTarget.ts > 5000) {
+        _mappingTarget.el.style.outline = '';
+        _mappingTarget = null;
+    }
+    if (!pad) {
+        if (phyConnected) { phyConnected = false; phyName = ''; _phyButtons = 0; _phyTriggers = [0, 0]; }
+        if (phy.textContent !== '🎮 未连接') phy.textContent = '🎮 未连接';
+        // 断开时回正视觉
+        setStickVisual('stickL', 0, 0); setStickVisual('stickR', 0, 0);
+        return;
+    }
+    if (!phyConnected || phyName !== pad.id || phy.textContent === '🎮 未连接') {
+        phyConnected = true; phyName = pad.id;
+        phy.textContent = '🎮 ' + pad.id.substring(0, 30);
+    }
+    // 物理按钮 (每帧重新计算，不与虚拟触控共享 bit)
+    _phyButtons = 0;
+    for (let i = 0; i < Math.min(pad.buttons.length, PHY_BTN_TO_KEY.length); i++) {
+        const k = PHY_BTN_TO_KEY[i];
+        const cid = PHY_BTN_TO_CID[i];
+        if (pad.buttons[i].pressed) {
+            if (k !== null && k !== undefined) _phyButtons |= (1 << k);
+            if (cid) {
+                const el = virtualPad.querySelector(`[data-control-id="${cid}"]`);
+                if (el) el.classList.add('phy-active');
+            }
+        } else {
+            if (cid) {
+                const el = virtualPad.querySelector(`[data-control-id="${cid}"]`);
+                if (el) el.classList.remove('phy-active');
+            }
+        }
+    }
+    // 映射学习：按真实手柄按钮时自动捕获
+    if (_mappingTarget) {
+        for (let i = 0; i < Math.min(pad.buttons.length, PHY_BTN_TO_KEY.length); i++) {
+            if (pad.buttons[i].pressed) {
+                if (_mappingTarget.type === 'key') {
+                    const newKey = PHY_BTN_TO_KEY[i];
+                    if (newKey !== null) {
+                        _mappingTarget.el.dataset.mappedKey = String(newKey);
+                        _mappingTarget.el.dataset.key = newKey;
+                        _mappingTarget.label.textContent = `#${newKey}`;
+                        saveCustomLayout(true);
+                        rebuildPhyMapping();
+                    }
+                } else if (_mappingTarget.type === 'phy') {
+                    _mappingTarget.el.dataset.mappedPhy = String(i);
+                    _mappingTarget.label.textContent = `P:${i}`;
+                    saveCustomLayout(true);
+                    rebuildPhyMapping();
+                }
+                _mappingTarget.el.style.outline = '';
+                _mappingTarget = null;
+                break;
+            }
+        }
+    }
+    // 合并: 虚拟(触控) | 物理(手柄)
+    gamepadState.buttons = _touchButtons | _phyButtons;
+    // 扳机 (物理每帧重新计算，不与虚拟共享)
+    _phyTriggers[0] = (pad.buttons.length > 6 && pad.buttons[6].value !== undefined) ? pad.buttons[6].value : 0;
+    _phyTriggers[1] = (pad.buttons.length > 7 && pad.buttons[7].value !== undefined) ? pad.buttons[7].value : 0;
+    gamepadState.triggers = [Math.max(_touchTriggers[0], _phyTriggers[0]), Math.max(_touchTriggers[1], _phyTriggers[1])];
+    // 摇杆 (超出死区则覆盖，回中且无触控时归零)
+    const dead = 0.15;
+    const hasTouch = (id) => [...activeTouches.values()].some(t => t.element?.id === id);
+    const sides = ['stickL', 'stickR'];
+    for (let s = 0; s < 2; s++) {
+        const i = s * 2;
+        const axLen = s === 0 ? 2 : Math.min(2, pad.axes.length - 2);
+        for (let a = 0; a < axLen; a++) {
+            const v = pad.axes[i + a];
+            if (Math.abs(v) > dead) {
+                gamepadState.axes[i + a] = v;
+            } else if (!hasTouch(sides[s])) {
+                gamepadState.axes[i + a] = 0;
+            }
+        }
+    }
+    // 视觉同步
+    setStickVisual('stickL', gamepadState.axes[0], gamepadState.axes[1]);
+    setStickVisual('stickR', gamepadState.axes[2], gamepadState.axes[3]);
+}
+window.addEventListener('gamepadconnected', (e) => { phyConnected = true; });
+window.addEventListener('gamepaddisconnected', () => { phyConnected = false; phyName = ''; document.getElementById('phyInfo').textContent = '🎮 未连接'; });
 
 virtualPad.addEventListener('touchstart', (e) => {
     if (isEditMode) return;
@@ -603,10 +851,10 @@ virtualPad.addEventListener('touchstart', (e) => {
             const f = el.querySelector('.trigger-fill'); if (f) f.style.height = `${val * 100}%`;
             const th = el.querySelector('.trigger-thumb'); if (th) th.style.top = `${val * 100}%`;
             el.classList.add('pressed');
-            if (el.dataset.controlId === 'triggerL') gamepadState.triggers[0] = val;
-            else gamepadState.triggers[1] = val;
+            if (el.dataset.controlId === 'triggerL') _touchTriggers[0] = val;
+            else _touchTriggers[1] = val;
         } else if (el.classList.contains('v-btn')) {
-            gamepadState.buttons |= (1 << parseInt(el.dataset.key));
+            _touchButtons |= (1 << parseInt(el.dataset.key));
             el.classList.add('pressed');
         }
     }
@@ -635,8 +883,8 @@ virtualPad.addEventListener('touchmove', (e) => {
             const val = Math.max(0, Math.min(1, relY));
             const f = d.element.querySelector('.trigger-fill'); if (f) f.style.height = `${val * 100}%`;
             const th = d.element.querySelector('.trigger-thumb'); if (th) th.style.top = `${val * 100}%`;
-            if (d.element.dataset.controlId === 'triggerL') gamepadState.triggers[0] = val;
-            else gamepadState.triggers[1] = val;
+            if (d.element.dataset.controlId === 'triggerL') _touchTriggers[0] = val;
+            else _touchTriggers[1] = val;
         }
     }
 }, { passive: false });
@@ -647,16 +895,16 @@ virtualPad.addEventListener('touchend', (e) => {
     for (const t of e.changedTouches) {
         const d = activeTouches.get(t.identifier);
         if (!d) continue;
-        if (d.element.dataset.controlId === 'triggerL') { gamepadState.triggers[0] = 0; d.element.classList.remove('pressed'); const f = d.element.querySelector('.trigger-fill'); if (f) f.style.height = '0%'; const th = d.element.querySelector('.trigger-thumb'); if (th) th.style.top = '0%'; }
-        else if (d.element.dataset.controlId === 'triggerR') { gamepadState.triggers[1] = 0; d.element.classList.remove('pressed'); const f = d.element.querySelector('.trigger-fill'); if (f) f.style.height = '0%'; const th = d.element.querySelector('.trigger-thumb'); if (th) th.style.top = '0%'; }
+        if (d.element.dataset.controlId === 'triggerL') { _touchTriggers[0] = 0; d.element.classList.remove('pressed'); const f = d.element.querySelector('.trigger-fill'); if (f) f.style.height = '0%'; const th = d.element.querySelector('.trigger-thumb'); if (th) th.style.top = '0%'; }
+        else if (d.element.dataset.controlId === 'triggerR') { _touchTriggers[1] = 0; d.element.classList.remove('pressed'); const f = d.element.querySelector('.trigger-fill'); if (f) f.style.height = '0%'; const th = d.element.querySelector('.trigger-thumb'); if (th) th.style.top = '0%'; }
         else if (d.element.classList.contains('v-btn')) {
-            gamepadState.buttons &= ~(1 << parseInt(d.element.dataset.key));
+            _touchButtons &= ~(1 << parseInt(d.element.dataset.key));
             d.element.classList.remove('pressed');
         } else if (d.element.classList.contains('v-stick')) {
             if (!d.moved) {
                 const btn = d.element.id === 'stickL' ? 8 : 9;
-                gamepadState.buttons |= (1 << btn);
-                setTimeout(() => { gamepadState.buttons &= ~(1 << btn); }, 60);
+                _touchButtons |= (1 << btn);
+                setTimeout(() => { _touchButtons &= ~(1 << btn); }, 60);
             }
             d.element.querySelector('.v-stick-knob').style.transform = 'translate(-50%,-50%)';
             if (d.element.id === 'stickL') { gamepadState.axes[0] = 0; gamepadState.axes[1] = 0; }
@@ -673,7 +921,7 @@ let gyroData = { x: 0, y: 0, z: 0 }, accelData = { x: 0, y: 0, z: 0 };
 // 陀螺仪积分累加器，用于客户端立方体
 let cubeRot = { pitch: 0, yaw: 0, roll: 0 };
 let lastMotionTs = 0;
-const motionToggle = document.getElementById('motionToggle');
+const motionMode = document.getElementById('motionMode');
 const motionVisual = document.getElementById('motionVisual');
 const cube = document.querySelector('.cube');
 const gyroDisplay = document.querySelector('.gyro-data');
@@ -687,13 +935,14 @@ async function requestWakeLock() {
     catch (e) { /* wake lock not supported */ }
 }
 
+function fmt(v, d) { return (v || 0).toFixed(d).padStart(d === 1 ? 6 : 5); }
+
 function updateVisualization() {
     const a = accelData;
     const g = gyroData;
-    // 陀螺仪积分累计角（同 DSU 映射: beta→pitch, alpha→yaw, gamma→roll）
     if (cube) cube.style.transform = `rotateX(${cubeRot.pitch}deg) rotateY(${cubeRot.roll}deg) rotateZ(${cubeRot.yaw}deg)`;
-    if (gyroDisplay) gyroDisplay.textContent = `陀螺仪: X=${(g.x || 0).toFixed(1)} Y=${(g.y || 0).toFixed(1)} Z=${(g.z || 0).toFixed(1)}`;
-    if (accelDisplay) accelDisplay.textContent = `加速度: X=${(a.x || 0).toFixed(1)} Y=${(a.y || 0).toFixed(1)} Z=${(a.z || 0).toFixed(1)}`;
+    if (gyroDisplay) gyroDisplay.textContent = `陀螺 X:${fmt(g.x,1)} Y:${fmt(g.y,1)} Z:${fmt(g.z,1)}`;
+    if (accelDisplay) accelDisplay.textContent = `加速 X:${fmt(a.x,2)} Y:${fmt(a.y,2)} Z:${fmt(a.z,2)}`;
 }
 
 function startSensor() {
@@ -710,25 +959,18 @@ function startSensor() {
         gyroData = { x: gx, y: gy, z: gz };
         accelData = { x: a.x || 0, y: a.y || 0, z: a.z || 0 };
         // 陀螺仪积分: 累积角 += 角速度(°/s) × Δt(s) (仅体感开启时)
-        if (motionToggle.checked) {
+        if (motionMode.value !== 'off') {
             const ts = e.timeStamp;
             if (lastMotionTs) {
                 const dt = (ts - lastMotionTs) / 1000;
                 if (dt > 0 && dt < 0.5) {
-                    // 检测横竖屏: 竖屏 0°/180°, 横屏 90°/270°
                     const angle = screen.orientation ? screen.orientation.angle : 0;
                     const isLandscape = angle % 180 !== 0;
-                    // var orientation = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
-                    // const isLandscape = orientation == "landscape-primary"; //"portrait-primary";
-                    // 屏幕水平/垂直轴 → 手机物理轴映射:
-                    //   竖屏: 水平轴 = X(beta=前后), 垂直轴 = Y(gamma=左右)
-                    //   横屏: 水平轴 = Y(gamma=前后), 垂直轴 = X(beta=左右)
-                    const pitchRate = isLandscape ? gy : gx;  // 前后倾斜速率
-                    const rollRate = isLandscape ? gx : gy;  // 左右翻转速率
-                    cubeRot.pitch += pitchRate * dt * -1;  // pitch 方向相反
-                    cubeRot.roll += rollRate * dt * -1;  // roll 方向相反
-                    cubeRot.yaw += gz * dt;  // 自旋 (alpha, 始终不变)
-                    // orientationStatus.textContent = isLandscape ? "横屏" : "竖屏";
+                    const pitchRate = isLandscape ? gy : gx;
+                    const rollRate = isLandscape ? gx : gy;
+                    cubeRot.pitch += pitchRate * dt * -1;
+                    cubeRot.roll += rollRate * dt * -1;
+                    cubeRot.yaw += gz * dt;
                 }
             }
             lastMotionTs = ts;
@@ -757,8 +999,8 @@ function stopSensor() {
     updateVisualization();
 }
 
-motionToggle.addEventListener('change', async () => {
-    const on = motionToggle.checked;
+motionMode.addEventListener('change', async () => {
+    const on = motionMode.value !== 'off';
     motionVisual.classList.toggle('hidden', !on);
     if (on) {
         requestWakeLock();
@@ -808,24 +1050,29 @@ let lastDataStr = '';
 let idleFrames = 0;
 
 function buildPacket() {
-    const gyro = motionToggle.checked ? gyroData : { x: 0, y: 0, z: 0 };
+    const mode = motionMode.value;
+    const gyro = (mode === 'both' || mode === 'gyro') ? gyroData : { x: 0, y: 0, z: 0 };
+    const accel = (mode === 'both' || mode === 'accel') ? accelData : { x: 0, y: 0, z: 0 };
     return JSON.stringify({
-        timestamp: Date.now() / 1000, gyroscope: gyro, accelerometer: accelData,
+        timestamp: Date.now() / 1000, gyroscope: gyro, accelerometer: accel,
         buttons: gamepadState.buttons, axes: gamepadState.axes, triggers: gamepadState.triggers
     });
 }
 
 function dataChanged() {
-    const g = motionToggle.checked ? gyroData : { x: 0, y: 0, z: 0 };
-    const sig = JSON.stringify({ g: g, a: accelData, b: gamepadState.buttons, x: gamepadState.axes, t: gamepadState.triggers });
+    const mode = motionMode.value;
+    const g = (mode === 'both' || mode === 'gyro') ? gyroData : { x: 0, y: 0, z: 0 };
+    const a = (mode === 'both' || mode === 'accel') ? accelData : { x: 0, y: 0, z: 0 };
+    const sig = JSON.stringify({ g: g, a: a, b: gamepadState.buttons, x: gamepadState.axes, t: gamepadState.triggers });
     if (sig !== lastDataStr) { lastDataStr = sig; return true; }
     return false;
 }
 
 setInterval(() => {
+    readPhysicalGamepad();
     if (socket?.readyState !== WebSocket.OPEN) return;
 
-    if (motionToggle.checked) {
+    if (motionMode.value !== 'off') {
         socket.send(buildPacket());
         idleFrames = 0;
         return;
@@ -850,4 +1097,5 @@ currentOrientation = getOrientation();
 document.body.className = `preset-${currentPreset}`;
 initPresetSelect();
 renderControls();
+loadMotionPos();
 updateSafeArea();
